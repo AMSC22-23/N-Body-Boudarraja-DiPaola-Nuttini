@@ -9,6 +9,7 @@
 #include <fstream>
 #include <string>
 #include <omp.h>
+#include<chrono>
 
 
 class simulationFunctionsParallel{
@@ -20,18 +21,15 @@ public:
         std::vector<Particle<dim>> particles;
         particles.reserve(numberOfParticles);
         //PER DEBUGGING
-        /*particles.push_back(Particle<dim>(1, Arrows<dim>({1.0, 2.0, 3.0}), Arrows<dim>({0.0, 0.0, 0.0}), Arrows<dim>({0.0,0.0,0.0}), Arrows<dim>({0.0,0.0,0.0}), 5.0));
-        particles.push_back(Particle<dim>(2, Arrows<dim>({3.0, 2.0, 1.0}), Arrows<dim>({0.0, 0.0, 0.0}), Arrows<dim>({0.0,0.0,0.0}), Arrows<dim>({0.0,0.0,0.0}), 7.0));
-        particles.push_back(Particle<dim>(3, Arrows<dim>({4.0, 5.0, 6.0}), Arrows<dim>({0.0, 0.0, 0.0}), Arrows<dim>({0.0,0.0,0.0}), Arrows<dim>({0.0,0.0,0.0}), 10.0));
-        particles.push_back(Particle<dim>(4, Arrows<dim>({6.0, 5.0, 4.0}), Arrows<dim>({0.0, 0.0, 0.0}), Arrows<dim>({0.0,0.0,0.0}), Arrows<dim>({0.0,0.0,0.0}), 1.0));*/
+        
         // Metodo che genera un numero prefissato di particelle di dimensione DIM con valori casuali
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_real_distribution<double> distribution(-10.0, 10.0); // Cambia il range se necessario
         std::uniform_real_distribution<double> massDistribution(0.1, 10.0); // Massa compresa tra 0.1 e 10.0 (valori arbitrari)
-   // #pragma omp parallel num_threads(8)
-   // {  
-    //     #pragma omp for
+ // #pragma omp parallel num_threads(8) 
+ //   {  
+  //  #pragma omp for
         for (unsigned int i = 0; i < numberOfParticles; ++i) {
             // Genera valori casuali per posizione, velocità, massa, ecc.
             Arrows<dim> randomPosition;
@@ -49,89 +47,16 @@ public:
 
             // Crea e aggiungi una particella con valori casuali alla collezione
             particles.push_back(Particle<dim>(i + 1, randomPosition, randomVelocity, Arrows<dim>(), Arrows<dim>(), randomMass));
-   //     }
+     }
 
-    }
+  // }
         
 
 
         return particles;
     }
-    /*
-    //Metodo che esegue la simulazione. Tale metodo provvederà a chiamare il generatore di Particles. PER ORA SOLVER BASE!!!
-    static void doSim(){
-        
-        std::vector<Particle<dim>> particles = std::vector<Particle<dim>>();
 
-        std::vector<double> positions = std::vector<double>();
-
-        particles = generateParticles();
-        for(Particle particle : particles){
-            particle.setToZero();
-            particle.print();
-            std::cout<<" "<<std::endl;
-        }
-
-        
-        
-        for(unsigned int i=0 ; i<cycles; i++){
-            std::cout<<"!!!! INIZIO DELLA SIMULAZIONE !!!!"<<std::endl;
-            std::cout<<" "<<std::endl;
-            std::cout<<"CICLO "<< i << ":" << std::endl;
-            std::cout<<" "<<std::endl;
-            
-            stepSim(particles,positions);
-            updateSim(particles);
-        }
-        writePositionToTXT(positions);
-    
-    }
- 
-    
    
-    
-    //Algoritmo Base
-    static void stepSim(std::vector<Particle<dim>>& particles,std::vector<double>& positions){  
-        memPos(particles,positions);//Riempi le posizioni a ciclo
-        for(unsigned int i = 0; i<particles.size(); ++i){
-            Arrows<dim> temp = Arrows<dim>();
-            for(unsigned int j=0; j<particles.size(); ++j){
-                if(i==j){continue;}
-                temp += particles[i].calcCoefficients(particles[j]);
-            }
-            particles[i].coefficientsSetter(temp);
-            particles[i].calcAccelleration();
-        }
-    } 
-
-    //Algoritmo ridotto
-    static void reducedSim(std::vector<Particle<dim>>& particles){
-        unsigned int middleIndex = particles.size() / 2;
-        for(unsigned int i = 0; i < middleIndex; ++i){
-            Arrows<dim> temp = Arrows<dim>();
-            Arrows<dim> temp2 = Arrows<dim>();
-            for(unsigned int j = i + 1; j < particles.size(); ++j){
-                temp += particles[i].calcCoefficients(particles[j]);
-                particles[i].coefficientsSetter(temp);
-                temp2 = particles[j].getCoefficients() - particles[i].calcCoefficients(particles[j]);
-                particles[j].coefficientsSetter(temp2);
-            }
-            particles[i].calcAccelleration();
-            particles[particles.size()-i-1].calcAccelleration();
-        }
-    }
- 
-        
-    static void updateSim(std::vector<Particle<dim>>& particles){ 
-        double local_dt = dt;
-        for(Particle<dim>& particle : particles){
-            particle.updateVelocity(local_dt);
-            particle.updatePosition(local_dt);
-            particle.print();
-            std::cout<<" "<<std::endl;
-            particle.setToZero();
-        }
-    } */
      //Salvataggio delle posizioni su una vector. utile per generare il file txt che dovrà essere letto per l'animazione grafica
     static void memPos(const std::vector<Particle<dim>> particles, std::vector<double>& positions){
         for(Particle particle : particles){
@@ -144,7 +69,6 @@ public:
      //INSERIMENTO BLOCCHI PARALLELI:
      static void doParallelSim()
    {
-     double local_totalTime = totalTime;
     std::vector<double> positions = std::vector<double>();
     positions.reserve(numberOfParticles);
 
@@ -152,71 +76,87 @@ public:
        std::vector<Particle<dim>> particles = std::vector<Particle<dim>>();
        particles.reserve(numberOfParticles);
        particles = generateParticles();
-       for(Particle particle : particles){
-           particle.setToZero();
-           particle.print();
-           std::cout<<" "<<std::endl;
-       }
+
+
       
       
-       int local_cycles = cycles;
-      
+      /*
+      il seguente ciclo for viene utilizzato per eseguire la simulazione dell'Nbody problem sulle N particelle appena generate dal metodo 
+      generateParticles(), . Il numero ci cili è stabilito nel file Constants.hpp dove il tempo totale della simulazione viene suddiviso per il numero di intervalli 
+      desiderati*/
+
        for(unsigned int i=0 ; i<cycles;i++){
-           std::cout<<"!!!! INIZIO DELLA SIMULAZIONE !!!!"<<std::endl;
-           std::cout<<" "<<std::endl;
-           std::cout<<"CICLO "<< i << ":" << std::endl;
-           std::cout<<" "<<std::endl;
+         
            stepParallelSim(particles,positions);
-           //updateSim(particles);      //sezione computata in quanto inserita nel processo di parallelizzazione 
-                                        //stepParallelSim
+                                                  
+    
        }
-        writePositionToTXT(positions);
+       
+         writePositionToTXT(positions);                            
 
        
    }
+   /*
+   il seguente metodo viene utilizzato per calcolare per ogni step dt l'iterazione tra le particles della nostra simulazione, 
+   utilizzando la openMp vengono parallelizzati tre processi:
+   1) il ciclo di inizializzazione dei coefficienti delle particelle ad ogni ciclo(viene impostato a 0)
+   2) vengono ricavati i coefficienti per ciascuna particella attraverso i due cicli for annidati, il thread safe è garantito dal fatto che le particelle si limitano
+   ad eseguire una lettura esclusivamente delle posizioni e delle masse ai fini dei calcolo dei coefficenti
+   3)Aggiornamento di velocità e posizione */
    static void stepParallelSim(std::vector<Particle<dim>>& particles,std::vector<double>& positions)
    { 
-        double local_dt = dt;
-        memPos(particles,positions);//Riempi le posizioni a ciclo
-   
-       
-            
-         #pragma omp parallel num_threads(8) shared( particles, local_dt)
+       memPos(particles,positions);//Riempi le posizioni a ciclo                       
+
+        
+         #pragma omp parallel shared( particles)
          {
-               
-           #pragma omp for  schedule(static) 
+            omp_set_num_threads(omp_get_max_threads());
+
+             #pragma omp for schedule(static,omp_get_num_threads())
+             for(size_t i=0; i< particles.size(); ++i){
+                particles[i].setToZero();
+
+             }
+                         
+            
+        #pragma omp barrier  
+
+
+        Arrows<dim> temp1=Arrows <dim>();
+        bool collision=false;
+           #pragma omp for  schedule(static,numberOfParticles/omp_get_num_threads()) private (temp1)
             for(unsigned int i = 0; i<particles.size(); ++i){
-                    
-                    Arrows<dim> temp1=Arrows <dim>();
+                    temp1*=0;
                 
                      for(unsigned int j=0; j<particles.size(); ++j){
 
                         if(i==j){continue;}
                         temp1 += particles[i].calcCoefficients(particles[j]);
+                        if(particles[i].collision(particles[j])){collision=true;}
                     }
-                    
-                 
-                    
+                            
                     particles[i].coefficientsSetter(temp1);
-                    particles[i].calcAccelleration();
+                        if(collision){
+                            particles[i].calcAccelleration();
+                        }
+                        else
+                        {
+                            particles[i].calcAccellerationAfterCollision();
+                        }
+                        
                             
             } //NB: the pragma omp barrier could be avoided because it is implicit at the end of the parallel for
             //#pragma omp barrier
-            #pragma  omp for schedule (static) 
+            #pragma  omp for schedule (static,numberOfParticles/omp_get_num_threads()) 
             for(size_t i=0; i<particles.size();++i)
             {
-                 particles[i].updateVelocity(local_dt);
-                 particles[i].updatePosition(local_dt);
+                 particles[i].updateVelocity(dt);
+                 particles[i].updatePosition(dt);
             }
             
 
-     }    
-          /* for(size_t i=0; i<particles.size();++i)
-           {
-               particles[i].print();
-               std::cout<<" "<<std::endl;
-           }
-           */
+     }   
+           
      } //steoParallelSim e doParallelSim sono del blocco parallelo
     
    
@@ -279,3 +219,4 @@ public:
 };
 
 #endif // PARTICLE_UTIL_HPP
+  
