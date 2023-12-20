@@ -1,8 +1,7 @@
-// Committed by Giuseppe Di Paola
-
 #include "Arrows.hpp"
 #include "Constants.hpp"
 #include <iostream>
+#include <omp.h>
 #ifndef PARTICLE_H
 #define PARTICLE_H
 template <unsigned int dim>
@@ -28,6 +27,8 @@ class Particle {
        Arrows<dim> calcCoefficients(const Particle& otherParticle){
            //Calcolo in primis una arrow che abbia come componenti le differenze tra le coordinate
            Arrows<dim> differences = Arrows<dim>();
+           
+           
            for(unsigned int i=0; i<dim; ++i){
                differences[i]=position[i]-otherParticle.position[i];
            }
@@ -38,16 +39,26 @@ class Particle {
       
        //Meteodo per il calcolo delle accellerazioni
        void calcAccelleration(){
-           const double G = 6.673;
+           const double G = -6.673;
            accelleration = coefficients*G;;
        }
 
+        //Metodo per calcolo Accellerazione dopo collisione. AGGIUNTO DA KARIM
+        void calcAccellerationAfterCollision(){
+            accelleration = coefficients*G;
+            accelleration = accelleration * (-1);
+        }
 
 
 
-       //Metodo per il calcolo e settaggio velocità
-       void calcVelocity(){
-          
+       //Metodo per check collisioni FATTO DA KARIM
+       bool collision(const Particle<dim>& otherParticle){
+          //Compara posizioni tra particelle
+          for(unsigned int i=0 ; i<dim ; ++i){
+            if(position[i] != otherParticle.position[i]){
+                return false;
+            }
+          }
        }
 
 
@@ -98,14 +109,53 @@ class Particle {
 
        //Metodo per set valori coefficienti
        void setToZero(){
-           coefficients = Arrows<dim>({0.0, 0.0, 0.0});
-           accelleration = Arrows<dim>({0.0, 0.0, 0.0});
+           if constexpr (dim == 1){
+               /*coefficients = Arrows<dim>({0.0});
+               accelleration = Arrows<dim>({0.0});*/                    //MODIFICHE APPORTATE AI FINI DI ALLEGGERIMENTO
+               coefficients*= 0;
+               accelleration*=0;
+           }
+           else if constexpr (dim==2)
+           {
+               //coefficients = Arrows<dim>({0.0, 0.0});
+               //accelleration = Arrows<dim>({0.0, 0.0});
+               coefficients*=0;
+               accelleration*=0;
+           }
+           else if constexpr(dim==3){
+              // coefficients = Arrows<dim>({0.0, 0.0, 0.0});
+              // accelleration = Arrows<dim>({0.0, 0.0, 0.0});
+              coefficients  *= 0;
+              accelleration *=0;
+           }
+
+
        }
       
        void coefficientsSetter (Arrows<dim>& otherCoefficients){
-           coefficients=otherCoefficients;
+            
+           coefficients=otherCoefficients; 
        }
+       
+
+       Arrows<dim> getCoefficients() const {
+           return coefficients;
+        }
+        
+        //MODIFICHE 17/12
+        double getPositionCoordinate(const unsigned int i) const{
+            return position[i];
+        }
+
+        auto getID() const{
+            return ID;
+        }
+
+         auto getMass() const{
+            return mass;
+        }  
       
 };
-
 #endif
+
+
