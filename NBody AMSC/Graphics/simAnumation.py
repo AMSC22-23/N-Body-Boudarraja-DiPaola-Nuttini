@@ -71,6 +71,6 @@ def animate_positions(file_path):
 # Example usage:
 if __name__ == '__main__':
     pool = multiprocessing.Pool()
-    pool.apply_async(animate_positions, ("/home/karim/Scrivania/Progetto/NBody AMSC/positions.txt",))
+    pool.apply_async(animate_positions, ("../../NBody AMSC/positions.txt",))
     pool.close()
     pool.join()
