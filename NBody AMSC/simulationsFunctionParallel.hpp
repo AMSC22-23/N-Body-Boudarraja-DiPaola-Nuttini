@@ -139,13 +139,10 @@ public:
 
                 #pragma omp for schedule(static)
                  for (unsigned int i = 0; i < particles.size(); ++i) {
-                    particles[i].updateVelocity(half_dt);
+                    particles[i].updateVelocity(local_dt);
                 }
 
-                #pragma omp for schedule(static)
-                for (unsigned int i = 0; i < particles.size(); ++i) {
-                    particles[i].updateVelocity(half_dt);
-                }
+
             }//alla fine dei cicli calcolati in base al total time e dt viene scritto su file positions
         writePositionToTXT(positions); 
     }
