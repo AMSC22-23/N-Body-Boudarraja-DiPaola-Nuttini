@@ -84,7 +84,7 @@ public:
 
             for(unsigned int j=0; j<particles.size(); ++j){
                 if(i==j){continue;}
-                temp += particles[i].calcCoefficients(particles[j]);
+                temp -= particles[i].calcCoefficients(particles[j]);
                 if(particles[i].collision(particles[j])){collision=true;}
                 }
                 particles[i].coefficientsSetter(temp);
