@@ -27,7 +27,7 @@ class Particle {
        Arrows<dim> calcCoefficients(const Particle& otherParticle){
            //Calcolo in primis una arrow che abbia come componenti le differenze tra le coordinate
            Arrows<dim> differences = Arrows<dim>();
-           
+             
            
            for(unsigned int i=0; i<dim; ++i){
                differences[i]=position[i]-otherParticle.position[i];
@@ -39,8 +39,7 @@ class Particle {
       
        //Meteodo per il calcolo delle accellerazioni
        void calcAccelleration(){
-           const double G = -6.673;
-           accelleration = coefficients*G;;
+           accelleration = coefficients*G;
        }
 
         //Metodo per calcolo Accellerazione dopo collisione. AGGIUNTO DA KARIM
@@ -59,6 +58,7 @@ class Particle {
                 return false;
             }
           }
+          return true;
        }
 
 
@@ -83,8 +83,8 @@ class Particle {
 
        //Metodo per calcolare future Velocità. Si basa sulle leggi di moto del m.u.a. La velocità V_t sarà data da V_t_0 + Accellerazione * dt
        Arrows<dim> calcNextVelocity(double& dt){
-           Arrows<dim> futureAcc = Arrows<dim>();
-           return futureAcc = velocity + accelleration * dt;
+           
+           return velocity + accelleration * dt;
        }
 
 
@@ -158,4 +158,10 @@ class Particle {
 };
 #endif
 
+
+
+      
+    
+   
+     
 
