@@ -1,9 +1,4 @@
-/*
-ATTENZIONE!!!
-Il seguente header serve a definire le costanti del problema e deve essere ancora implementato in una maniera coerente
-per poter essere utilizzato intelligentemente nel programma
 
-*/
 
 
 #ifndef CONSTANTS_H
