@@ -79,8 +79,7 @@ public:
    { 
 
         double local_dt = dt;
-        double half_dt = dt / 2;
-        //memPos(particles, positions); // Fill the positions at each cycle
+
 
     std::vector<Arrows<dim>> tempCoefficients(particles.size());
 
@@ -113,7 +112,7 @@ public:
 
                     for (unsigned int j = 0; j < particles.size(); ++j) {
                 if (i == j) { continue; }
-                    temp1 += particles[i].calcCoefficients(particles[j]);
+                    temp1 -= particles[i].calcCoefficients(particles[j]);
                 if (particles[i].collision(particles[j])) { collisions[i] = true; }
                 }
                    tempCoefficients[i] = temp1;
