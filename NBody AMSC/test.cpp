@@ -7,7 +7,7 @@
 #include "Particle.hpp"
 #include "Arrows.hpp"
 #include "simulationfunctions.hpp"
-#include "simulationFunctionParallel.hpp"
+#include "simulationsFunctionParallel.hpp"
 
 
 
