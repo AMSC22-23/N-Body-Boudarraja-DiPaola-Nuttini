@@ -1,6 +1,3 @@
-// File adibito alla gestione delle funzioni usate globalmente per fare la simulazione in parallelo
-// possiamo già identificare un metodo utile per far proseguire la simulazione dove specifica ciò che accade per ogni timestep
-
 #ifndef PARTICLE_UTIL_HPP_PARALLEL
 #define PARTICLE_UTIL_HPP_PARALLEL
 
@@ -28,7 +25,7 @@ public:
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_real_distribution<double> distribution(-100.0, 100.0); // Cambia il range se necessario
-        std::uniform_int_distribution<double> distributionVel(-1.0,1.0);
+        std::uniform_real_distribution<double> distributionVel(-1.0,1.0);
         std::uniform_real_distribution<double> massDistribution(10.0, 1000000.0); // Massa compresa tra 0.1 e 10.0 (valori arbitrari)
  
         for (unsigned int i = 0; i < numberOfParticles; ++i) {
@@ -79,15 +76,16 @@ public:
    { 
 
         double local_dt = dt;
-
+        
+        
 
     std::vector<Arrows<dim>> tempCoefficients(particles.size());
 
     std::vector<bool> collisions(particles.size(), false);
 
-    #pragma omp parallel num_threads(7) shared(particles, local_dt, half_dt, tempCoefficients, collisions)
+    #pragma omp parallel num_threads(4) shared(particles, local_dt, tempCoefficients, collisions)
     {              
-         std::vector<double> positions = std::vector<double>();
+        std::vector<double> positions = std::vector<double>();
         positions.reserve(numberOfParticles);
 
         for(unsigned int c=0 ; c<cycles;c++){
@@ -111,11 +109,12 @@ public:
                     Arrows<dim> temp1 = Arrows<dim>();
 
                     for (unsigned int j = 0; j < particles.size(); ++j) {
-                if (i == j) { continue; }
-                    temp1 -= particles[i].calcCoefficients(particles[j]);
-                if (particles[i].collision(particles[j])) { collisions[i] = true; }
-                }
-                   tempCoefficients[i] = temp1;
+                        if (i == j) { continue; }
+                            temp1 += particles[i].calcCoefficients(particles[j]);
+                        if (particles[i].collision(particles[j])) { collisions[i] = true; }
+                    }
+                        
+                    tempCoefficients[i] = temp1;
                 
                 }
 
@@ -123,24 +122,23 @@ public:
                 for (unsigned int i = 0; i < particles.size(); ++i) {
                     particles[i].coefficientsSetter(tempCoefficients[i]);
                     if (collisions[i]) {
-                    particles[i].calcAccellerationAfterCollision();
-                     }
+                        particles[i].calcAccellerationAfterCollision();
+                    }
                     else {
-                    particles[i].calcAccelleration();
-                     }
+                        particles[i].calcAccelleration();
+                    }
             
                 }
 
                 #pragma omp for schedule(static)
                 for (unsigned int i = 0; i < particles.size(); ++i) {
-                particles[i].updatePosition(local_dt);
+                    particles[i].updatePosition(local_dt);
                 }
 
                 #pragma omp for schedule(static)
                  for (unsigned int i = 0; i < particles.size(); ++i) {
                     particles[i].updateVelocity(local_dt);
                 }
-
 
             }//alla fine dei cicli calcolati in base al total time e dt viene scritto su file positions
         writePositionToTXT(positions); 
@@ -198,6 +196,3 @@ public:
 };
 
 #endif // PARTICLE_UTIL_HPP
-            
-       
-
