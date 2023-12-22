@@ -141,7 +141,9 @@ public:
                 }
 
             }//alla fine dei cicli calcolati in base al total time e dt viene scritto su file positions
-        writePositionToTXT(positions); 
+        #pragma omp critical{
+        writePositionToTXT(positions);
+        }
     }
         
  } 
