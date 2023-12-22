@@ -27,7 +27,7 @@ public:
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_real_distribution<double> distribution(-10.0, 10.0); // Cambia il range se necessario
-         std::uniform_int_distribution<double> distributionVel(-1.0,1.0);
+         std::uniform_real_distribution<double> distributionVel(-1.0,1.0);
         std::uniform_real_distribution<double> massDistribution(0.1, 10.0); // Massa compresa tra 0.1 e 10.0 (valori arbitrari)
 
         for (unsigned int i = 0; i < numberOfParticles; ++i) {
@@ -84,7 +84,7 @@ public:
 
             for(unsigned int j=0; j<particles.size(); ++j){
                 if(i==j){continue;}
-                temp -= particles[i].calcCoefficients(particles[j]);
+                temp += particles[i].calcCoefficients(particles[j]);
                 if(particles[i].collision(particles[j])){collision=true;}
                 }
                 particles[i].coefficientsSetter(temp);
