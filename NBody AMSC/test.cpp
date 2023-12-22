@@ -5,9 +5,9 @@
 #include <cmath>
 #include "Constants.hpp"
 #include "Particle.hpp"
-#include "parallelSim.hpp"
 #include "Arrows.hpp"
-
+#include "simulationfunctions.hpp"
+#include "simulationFunctionParallel.hpp"
 
 
 
@@ -26,7 +26,7 @@ int main() {
 
     // Misura il tempo per la versione parallela
     auto start_parallel = std::chrono::high_resolution_clock::now();
-    simulationfunctions::doParallelSim();
+    simulationFunctionsParallel::doParallelSim();
     //stepSimParallel(particles);
     auto end_parallel = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed_parallel = end_parallel - start_parallel;
