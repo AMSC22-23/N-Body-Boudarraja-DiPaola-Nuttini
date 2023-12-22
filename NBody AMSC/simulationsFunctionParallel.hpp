@@ -149,7 +149,7 @@ public:
          
     //Scrivi le coordinate delle particelle su file TXT. Necessario per implementare la graficazione della simulazione
     static void writePositionToTXT(const std::vector<double> positions) {
-        std::ofstream outputFile("positionsParallel.txt");
+        std::ofstream outputFile("positions.txt");
         if (!outputFile.is_open()) {
             std::cerr << "Impossibile aprire il file!" << std::endl;
             return;
