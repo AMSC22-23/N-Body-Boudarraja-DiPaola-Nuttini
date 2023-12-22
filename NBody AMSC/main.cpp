@@ -2,7 +2,7 @@
 #include "Constants.hpp"
 #include "Particle.hpp"
 #include "simulationfunctions.hpp"
-#include "simulationFunctionParallel.hpp"
+#include "simulationsFunctionParallel.hpp"
 
 /*
 il main viene principalmente utilizzato per avviare il programma, al suo interno sono contenuti gli header files delle classi utilizzate per la simulazione
