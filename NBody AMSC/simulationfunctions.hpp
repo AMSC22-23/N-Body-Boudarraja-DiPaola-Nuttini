@@ -28,7 +28,7 @@ public:
         std::mt19937 gen(rd());
         std::uniform_real_distribution<double> distribution(-10.0, 10.0); // Cambia il range se necessario
          std::uniform_real_distribution<double> distributionVel(-1.0,1.0);
-        std::uniform_real_distribution<double> massDistribution(0.1, 10.0); // Massa compresa tra 0.1 e 10.0 (valori arbitrari)
+        std::uniform_real_distribution<double> massDistribution(0.1, 1.0); // Massa compresa tra 0.1 e 10.0 (valori arbitrari)
 
         for (unsigned int i = 0; i < numberOfParticles; ++i) {
             // Genera valori casuali per posizione, velocità, massa, ecc.
