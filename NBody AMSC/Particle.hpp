@@ -38,6 +38,7 @@ class Particle {
       
       
        //Meteodo per il calcolo delle accellerazioni
+       //di fatto si occupa di andare a moltiplicare i coefficienti della particella per la costante G, definita in Constants.hpp
        void calcAccelleration(){
            accelleration = coefficients*G;
        }
