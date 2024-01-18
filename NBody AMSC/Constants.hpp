@@ -5,7 +5,7 @@
 #define CONSTANTS_H
 
 //Dimensione del problema 1D 2D 3D
-const unsigned int dim=3;
+const unsigned int dim=2;
 
 
 //Costante Gravitazionale Universale G
