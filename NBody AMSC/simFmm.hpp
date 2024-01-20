@@ -80,6 +80,7 @@ public:
                  }
 
             }
+            FMM::fmm(particles, potentials);
         
 
             /*

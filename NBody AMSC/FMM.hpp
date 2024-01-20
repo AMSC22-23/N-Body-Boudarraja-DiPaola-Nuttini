@@ -1,5 +1,6 @@
 #include "Particle.hpp"
 #include "Arrows.hpp"
+#include "Constants.hpp"
 #include <iostream>
 
 
@@ -8,7 +9,7 @@ using namespace std;
 
 // Function that calculates the multipole expansion of a particle
 Arrows<dim> calcMultipoleExpansion(const Particle<dim>& particle) {
-   Arrows<dim> coefficients;
+   Arrows<dim> coefficients=Arrows<dim>();
 
 
    for (int i = 0; i < 2; ++i) {
@@ -22,7 +23,7 @@ Arrows<dim> calcMultipoleExpansion(const Particle<dim>& particle) {
 
 // Function that calculates the local expansion of a particle
 Arrows<dim> calcLocalExpansion(const Particle<dim>& particle) {
-   Arrows<dim> forces;
+   Arrows<dim> forces=Arrows<dim>();
 
 
    double distance = 1.0;
@@ -39,7 +40,7 @@ Arrows<dim> calcLocalExpansion(const Particle<dim>& particle) {
 
 // Function that calculates the multipole-to-local translation
 Arrows<dim> M2L(const Arrows<dim>& a) {
-   Arrows<dim> b;
+   Arrows<dim> b= Arrows<dim>
 
 
    b = a / (4.0 * M_PI);
@@ -51,7 +52,7 @@ Arrows<dim> M2L(const Arrows<dim>& a) {
 
 // Function that calculates the local-to-local translation
 Arrows<dim> L2L(const Arrows<dim>& b) {
-   Arrows<dim> a;
+   Arrows<dim> a= Arrows<dim>();
 
 
    a = b * 4.0 * M_PI;
@@ -63,7 +64,7 @@ Arrows<dim> L2L(const Arrows<dim>& b) {
 
 // Function that calculates the multipole-to-multipole translation
 Arrows<dim> M2M(const Arrows<dim>& a1, const Arrows<dim>& a2) {
-   Arrows a;
+   Arrows<dim> a=Arrows<dim>();
 
 
    a = a1 + a2;
@@ -87,7 +88,7 @@ double evaluate(Arrows<dim>& position, Arrows<dim>& multipoleCoefficients) {
 }
 
 
-void fmm(const std::vector<Particle<dim>>& particles, Arrows<dim>& u) {
+void fmm(const std::vector<Particle<dim>>& particles, std::vector<double>& u) {
    unsigned int J = floor(log2(particles.size()));
 
 
