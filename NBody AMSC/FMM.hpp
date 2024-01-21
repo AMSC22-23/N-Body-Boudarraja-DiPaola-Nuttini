@@ -26,7 +26,7 @@ Arrows<dim> calcLocalExpansion(const Particle<dim>& particle) {
    Arrows<dim> forces=Arrows<dim>();
 
 
-   double distance = 1.0;
+   double distance = 1.00;
 
 
    for (int i = 0; i < 2; ++i) {
