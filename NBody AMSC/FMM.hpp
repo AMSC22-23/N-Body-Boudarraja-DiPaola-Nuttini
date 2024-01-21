@@ -94,9 +94,11 @@ void fmm(const std::vector<Particle<dim>>& particles, std::vector<double>& u) {
 
    // Compute the weight
    for (int k = 0; k < 1 << J; ++k) {
-       for (const Particle<dim>& particle : particles) {
-           particle.calcCoefficients(*particles[k]);
-       }
+        for(size_t i=0; i<particles.size();++i)
+            {
+                particles[i].calcCoefficients(particles[k]);
+            }
+       
    }
 
 
