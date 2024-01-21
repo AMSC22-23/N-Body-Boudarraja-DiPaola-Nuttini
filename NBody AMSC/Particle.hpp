@@ -133,7 +133,7 @@ class Particle {
 
        }
       
-       void coefficientsSetter (Arrows<dim>& otherCoefficients){
+       void coefficientsSetter (Arrows<dim> otherCoefficients){
             
            coefficients=otherCoefficients; 
        }
