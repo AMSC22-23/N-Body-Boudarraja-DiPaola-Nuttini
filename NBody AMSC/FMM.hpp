@@ -26,7 +26,7 @@ Arrows<dim> calcLocalExpansion(const Particle<dim>& particle) {
    Arrows<dim> forces=Arrows<dim>();
 
 
-   double distance = 1.00;
+   double distance = 1.0;
 
 
    for (int i = 0; i < 2; ++i) {
@@ -103,7 +103,8 @@ void fmm(const std::vector<Particle<dim>>& particles, std::vector<double>& u) {
    for (int L = J - 1; L >= 0; --L) {
        for (int k = 0; k < 1 << L; ++k) {
            for (int s = 0; s < 2; ++s) {
-               particles[1 << L * 2 + k].coefficients = M2L(particles[1 << L * 2 + s].coefficients);
+                particles[1 << L * 2 + k].coefficientsSetter( M2L(particles[1 << L * 2 + s].getCoefficients()));
+
            }
        }
    }
